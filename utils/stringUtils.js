@@ -7,4 +7,5 @@ function splitByWhiteSpaces(sentence) {
 }
 
 
+
 module.exports = {splitByWhiteSpaces};

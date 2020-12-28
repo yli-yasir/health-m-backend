@@ -8,6 +8,7 @@ const patientSchema = new mongoose.Schema({
   bodyWeight: Number,
   address: trimmedString,
   phoneNumber: trimmedString,
+  email: trimmedString,
   pedigreeChart: trimmedString,
   admissionDate: Date,
   admittorName:trimmedString,

@@ -2,6 +2,7 @@ const Joi = require("joi");
 
 module.exports = Joi.object({
   fullName: Joi.string().min(2).max(100).required(),
+  email: Joi.string().email().required(),
   gender: Joi.string().valid("male", "female").required(),
   bodyWeight: Joi.number().max(1000).required(),
   birthDate: Joi.date().max(new Date()).required(),

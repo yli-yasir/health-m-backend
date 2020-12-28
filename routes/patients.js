@@ -61,5 +61,16 @@ router.patch("/:id", validateId, async (req, res, next) => {
   }
 });
 
+router.get("/",async (req,res,next)=>{  
+  const searchTerm = req.query.q
+  try{
+  const results = await patientRepo.searchPatients(searchTerm);
+  res.send(results);
+  }
+  catch(e){
+    next(e);
+  }
+})
+
 
 module.exports = router;
