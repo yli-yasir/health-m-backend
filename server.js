@@ -3,9 +3,11 @@ const express = require("express");
 const dbManager = require("./db/dbManager");
 const prettyLogger = require("./utils/prettyLogger");
 const patientsRouter = require("./routes/patients");
+const errorHandlers = require("./middleware/errorHandlers");
 
 const app = express();
 app.use(express.json());
+app.use(errorHandlers);
 
 dbManager.configureDb();
 dbManager.connectToDb(process.env.DB_CONNECTION_URI);

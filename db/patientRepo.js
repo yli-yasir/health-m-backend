@@ -1,17 +1,24 @@
 const PatientModel= require("./models/patientModel");
-const patientValidationSchema = require("./validation/patientValidationSchema");
+const createPatientSchema = require("./validation/createPatientSchema");
+const updatePatientSchema = require("./validation/updatePatientSchema");
 const stringUtils = require("../utils/stringUtils");
 const prettyLogger = require("../utils/prettyLogger");
 
 async function addPatient(patient) {
-  await patientValidationSchema.validateAsync(patient);
-  await new PatientModel(patient).save();
+  await createPatientSchema.validateAsync(patient);
+  const savedPatient =  await new PatientModel(patient).save();
   prettyLogger.logInfo("Added a new patient!");
+  return savedPatient;
 }
 
 async function getPatient(id) {
-  await PatientModel.findById(id);
-  prettyLogger.logInfo(`Retrieved patient with id: "${id}"!`);
+  const foundPatient =  await PatientModel.findById(id);
+  if(foundPatient){
+  prettyLogger.logInfo(`Retrieved patient with id: "${id}"!`);}
+  else{
+    prettyLogger.logWarning(`Could not find patient with id: "${id}"!`)
+  }
+  return foundPatient;
 }
 
 async function searchPatients(fullName) {
@@ -22,14 +29,26 @@ async function searchPatients(fullName) {
 }
 
 async function deletePatient(id){
-    await PatientModel.findByIdAndDelete(id)
-   prettyLogger.logInfo(`Deleted patient with id: "${id}"!`);
+  const deletedPatient = await PatientModel.findByIdAndDelete(id); 
+  if (deletedPatient){
+    prettyLogger.logInfo(`Deleted patient with id: "${id}"!`);
+  }  
+  else{
+      prettyLogger.logWarning(`Could not find patient with id: "${id}"!`)
+  }
+  return deletedPatient;
 }
 
 async function updatePatient(id,update){
-    await PatientModel.findByIdAndUpdate(id,update)
-    prettyLogger.logInfo(`updated patient with id: "${id}"!`)
-
+  await updatePatientSchema.validateAsync(update);
+  const updatedPatient = await PatientModel.findByIdAndUpdate(id,update); 
+  if (updatedPatient){
+    prettyLogger.logInfo(`updated patient with id: "${id}"!`);
+  }  
+  else{
+      prettyLogger.logWarning(`Could not find patient with id: "${id}"!`)
+  }
+  return updatedPatient;
 }
 
 module.exports = {addPatient,getPatient,updatePatient,deletePatient,searchPatients};
