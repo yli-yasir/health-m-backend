@@ -6,6 +6,7 @@ const patientSchema = new mongoose.Schema({
   fullName: trimmedString,
   gender: trimmedString,
   bodyWeight: Number,
+  birthDate: Date,
   address: trimmedString,
   phoneNumber: trimmedString,
   email: trimmedString,

@@ -21,7 +21,7 @@ module.exports = Joi.object({
   stepFamilyDescription: Joi.string().max(2000).optional().allow(""),
   diagnosisTreatment: Joi.object().pattern(
     Joi.string().max(10),
-    Joi.string().max(300)
+    Joi.string().max(300).allow('')
   ).optional(),
   doctorNotes: Joi.string().max(10000).optional(),
 });
