@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const patientRepo = require("../db/patientRepo");
+const patientManager = require("../db/patientManager");
 const { validateId } = require("../middleware/validators");
 
 router.post("/", async (req, res, next) => {
   const patient = req.body;
   try {
-    const savedPatient = await patientRepo.addPatient(patient);
+    const savedPatient = await patientManager.addPatient(patient);
     res.location(
       `${req.protocol}://${req.get("host")}${req.originalUrl}/${
         savedPatient.id
@@ -20,7 +20,7 @@ router.post("/", async (req, res, next) => {
 router.get("/:id", validateId, async (req, res, next) => {
   const id = req.params.id;
   try {
-    const foundPatient = await patientRepo.getPatient(id);
+    const foundPatient = await patientManager.getPatient(id);
     if (foundPatient) {
       res.json(foundPatient);
     } else {
@@ -34,7 +34,7 @@ router.get("/:id", validateId, async (req, res, next) => {
 router.delete("/:id", validateId, async (req, res, next) => {
   const id = req.params.id;
   try {
-    const deletedPatient = await patientRepo.deletePatient(id);
+    const deletedPatient = await patientManager.deletePatient(id);
     if (deletedPatient) {
       res.sendStatus(204);
     } else {
@@ -45,12 +45,11 @@ router.delete("/:id", validateId, async (req, res, next) => {
   }
 });
 
-
 router.patch("/:id", validateId, async (req, res, next) => {
   const id = req.params.id;
   const update = req.body;
   try {
-    const updatedPatient = await patientRepo.updatePatient(id,update);
+    const updatedPatient = await patientManager.updatePatient(id, update);
     if (updatedPatient) {
       res.sendStatus(200);
     } else {
@@ -61,16 +60,14 @@ router.patch("/:id", validateId, async (req, res, next) => {
   }
 });
 
-router.get("/",async (req,res,next)=>{  
-  const searchTerm = req.query.q
-  try{
-  const results = await patientRepo.searchPatients(searchTerm);
-  res.send(results);
-  }
-  catch(e){
+router.get("/", async (req, res, next) => {
+  const {q,page,limit} = req.query;
+  try {
+    const results = await patientManager.searchPatients(q,parseInt(page),parseInt(limit));
+    res.send(results);
+  } catch (e) {
     next(e);
   }
-})
-
+});
 
 module.exports = router;

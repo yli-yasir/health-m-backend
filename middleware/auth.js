@@ -1,4 +1,5 @@
-const userRepo = require("../db/userRepo");
+const userManager = require("../db/userManager");
+const jwt = require("jsonwebtoken");
 
 const AUTH_COOKIE_NAME = "tkn";
 const AUTH_COOKIE_SETTING = {
@@ -10,14 +11,15 @@ async function authenticateUser(req, res, next) {
   let email = req.body.email;
   const password = req.body.password;
   // If a username and password are defined and of type string
-  if (typeof email == "string" && typeof password !== "string") {
+  if (typeof email === "string" && typeof password === "string") {
     try {
       email = email.trim();
-      const authResult = userRepo.authenticateUser(email, password);
+      const authResult = await userManager.authenticateUser(email, password);
       //If auth failed
-      if (authResult.statusCode !== userRepo.SUCCESS) {
+      if (authResult.statusCode !== userManager.AUTH_SUCCESS) {
         return res.sendStatus(401);
       }
+      //If auth succeeded pass control to next route after injecting req.user
       req.user = { email: authResult.user.email };
       next();
     } catch (err) {
@@ -41,7 +43,7 @@ function grantToken(req, res, next) {
   );
 
   // Set a cookie in the response with the token
-  res.cookie(AUTH_COOKIE_NAME, AUTH_COOKIE_SETTING);
+  res.cookie(AUTH_COOKIE_NAME, token, AUTH_COOKIE_SETTING);
 
   // Pass control to the next route
   next();

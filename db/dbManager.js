@@ -11,12 +11,15 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 }
 
-async function connectToDb(uri){
+async function connectToDb(uri,afterConnect){
     try {
         await mongoose.connect(uri);
         prettyLogger.logInfo('Successfully connected to DB!');
+        if (typeof afterConnect !== 'undefined'){
+          afterConnect();
+        }
       } catch (e) {
-        prettyLogger.logError('Failed to connect to DB!');
+        prettyLogger.logError(e.stack);
       }
 }
 

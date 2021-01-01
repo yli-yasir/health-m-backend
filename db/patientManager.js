@@ -43,8 +43,8 @@ async function updatePatient(id, update) {
 }
 
 //searchTerm can be either part of patient full name or the patients email.
-async function searchPatients(searchTerm, options) {
-  
+async function searchPatients(searchTerm,page,limit, options) {
+
   const filter ={};
 
   if(searchTerm){
@@ -57,7 +57,9 @@ async function searchPatients(searchTerm, options) {
   filter.$or= [{fullName:  { $regex: patientNamePattern, $options: 'i' }},{email: patientEmail}]
   }
 
-  const results = await PatientModel.find(filter);
+  const skip = limit * (page-1);
+  // Skip and limit can accept NaN. In that case they have no effect.
+  const results = await PatientModel.find(filter).skip(skip).limit(limit);
 
   prettyLogger.logInfo(`Search results found!`);
 
