@@ -13,7 +13,7 @@ const patientSchema = new mongoose.Schema({
   pedigreeChart: trimmedString,
   admissionDate: Date,
   admittorName:trimmedString,
-  parentsSeperated: Boolean,
+  parentsSeparated: Boolean,
   parentsSeparatedDescription: trimmedString,
   parentsDivorced: Boolean,
   parentsDivorcedDescription: trimmedString,
