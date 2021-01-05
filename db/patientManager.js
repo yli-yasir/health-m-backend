@@ -43,21 +43,31 @@ async function updatePatient(id, update) {
 }
 
 //searchTerm can be either part of patient full name or the patients email.
-async function searchPatients(searchTerm,page,limit, options) {
+async function searchPatients(searchTerm, page, limit, patientCriteria) {
+  let filter = {};
 
-  const filter ={};
+  if (searchTerm) {
+    //Assume the searchTerm is the patients name and construct a pattern to match it
+    const patientNamePattern = patientUtils.getPatientNameSearchPattern(
+      searchTerm
+    );
 
-  if(searchTerm){
-  //Assume the searchTerm is the patients name and construct a pattern to match it
-  const patientNamePattern = patientUtils.getPatientNameSearchPattern(searchTerm);
-  
-  //Assume the searchTerm is the patients email
-  const patientEmail = searchTerm;
+    //Assume the searchTerm is the patients email
+    const patientEmail = searchTerm;
 
-  filter.$or= [{fullName:  { $regex: patientNamePattern, $options: 'i' }},{email: patientEmail}]
+    filter.$or = [
+      { fullName: { $regex: patientNamePattern, $options: "i" } },
+      { email: patientEmail },
+    ];
   }
 
-  const skip = limit * (page-1);
+  if (patientCriteria) {
+   filter =  Object.keys(patientCriteria)
+      .filter((key) => typeof patientCriteria[key] !== "undefined")
+      .reduce((acc, key) => ({...acc,[key]:patientCriteria[key]}), filter);
+  }
+
+  const skip = limit * (page - 1);
   // Skip and limit can accept NaN. In that case they have no effect.
   const results = await PatientModel.find(filter).skip(skip).limit(limit);
 

@@ -61,9 +61,20 @@ router.patch("/:id", validateId, async (req, res, next) => {
 });
 
 router.get("/", async (req, res, next) => {
-  const {q,page,limit} = req.query;
+  const query = req.query;
   try {
-    const results = await patientManager.searchPatients(q,parseInt(page),parseInt(limit));
+    const results = await patientManager.searchPatients(
+      query.q,
+      parseInt(query.page),
+      parseInt(query.limit),
+      {
+        gender: query.gender,
+        parentsSeparated: query.parentsSeparated,
+        parentsDivorced: query.parentsDivorced,
+        parentsDied: query.parentsDied,
+        stepFamily: query.stepFamily,
+      }
+    );
     res.send(results);
   } catch (e) {
     next(e);

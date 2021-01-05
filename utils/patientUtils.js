@@ -10,8 +10,8 @@ function buildPatientNameSearchPattern(words) {
   let pattern = "";
 
   words.forEach((word) => {
-    //assert a maybe any num of any chars - followed by boundary - then word then maybe more chars- then boundary
-    pattern += `(?=.*\\b${word}.*\\b)`;
+    //assert a maybe any num of any chars - followed by space/start - then word then maybe more chars- then space/end
+    pattern += `(?=.*(^|\\s)${word}.*(\\s|$))`;
   });
 
   //If the assertions succeeded then match the whole string
