@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const patientManager = require("../db/patientManager");
+const { verifyToken } = require("../middleware/auth");
 const { validateId } = require("../middleware/validators");
 
+router.use(verifyToken);
 router.post("/", async (req, res, next) => {
   const patient = req.body;
   try {

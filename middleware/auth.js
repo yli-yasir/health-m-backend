@@ -38,7 +38,7 @@ function grantToken(req, res, next) {
     { id: req.user.id, name: req.user.name },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1h",
+      expiresIn: "1d",
     }
   );
 
