@@ -6,6 +6,7 @@ const AUTH_COOKIE_NAME = "tkn";
 const AUTH_COOKIE_SETTING = {
   httpOnly: true,
   secure: process.env.SECURE_COOKIES === "true" ? true : false,
+  sameSite: false
 };
 
 async function authenticateUser(req, res, next) {
@@ -48,17 +49,17 @@ function grantToken(req, res, next) {
   // Set a cookie in the response with the token
   res.cookie(AUTH_COOKIE_NAME, token, AUTH_COOKIE_SETTING);
   
-  console.log('token granted.')
+  console.log('token granted: ', token)
   // Pass control to the next route
   next();
 }
 
 function verifyToken(req, res, next) {
-  const token = req.cookies["tkn"];
-  console.log('verified', token);
+  const token = req.cookies[AUTH_COOKIE_NAME];
   if (typeof token === "string") {
     try {
       req.user = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('verified: ', token);
       next();
     } catch (err) {
       next(err);
