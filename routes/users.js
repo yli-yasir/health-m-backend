@@ -1,12 +1,10 @@
 const router = require("express").Router();
-const { authenticateUser, grantToken, revokeToken, verifyToken } = require("../middleware/auth");
+const { authenticateUser, grantToken, verifyToken } = require("../middleware/auth");
 
-const sendSuccess = (_, res) => res.sendStatus(200);
 
-router.post("/login", authenticateUser, grantToken, sendSuccess);
+router.post("/login", authenticateUser, grantToken);
 
-router.get("/login", verifyToken, sendSuccess);
+router.get("/login", verifyToken, (_, res) => res.sendStatus(200));
 
-router.post("/logout", revokeToken, sendSuccess);
 
 module.exports = router;

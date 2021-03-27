@@ -2,13 +2,6 @@ const userManager = require("../db/userManager");
 const jwt = require("jsonwebtoken");
 const prettyLogger = require("../utils/prettyLogger");
 
-const AUTH_COOKIE_NAME = "tkn";
-const AUTH_COOKIE_SETTING = {
-  httpOnly: true,
-  secure: process.env.SECURE_COOKIES === "true" ? true : false,
-  sameSite: 'None; Secure'
-};
-
 async function authenticateUser(req, res, next) {
   let email = req.body.email;
   const password = req.body.password;
@@ -46,16 +39,17 @@ function grantToken(req, res, next) {
     }
   );
 
-  // Set a cookie in the response with the token
-  res.cookie(AUTH_COOKIE_NAME, token, AUTH_COOKIE_SETTING);
   
+
+  // Set a cookie in the response with the token
+  res.json({token});
   console.log('token granted: ', token)
-  // Pass control to the next route
-  next();
+  
 }
 
 function verifyToken(req, res, next) {
-  const token = req.cookies[AUTH_COOKIE_NAME];
+  const token = req.token;
+  console.log('detected token: ', token)
   if (typeof token === "string") {
     try {
       req.user = jwt.verify(token, process.env.JWT_SECRET);
@@ -69,9 +63,5 @@ function verifyToken(req, res, next) {
   }
 }
 
-function revokeToken(req, res, next) {
-  res.clearCookie(AUTH_COOKIE_NAME, AUTH_COOKIE_SETTING);
-  res.sendStatus(200);
-}
 
-module.exports = { authenticateUser, grantToken, verifyToken, revokeToken };
+module.exports = { authenticateUser, grantToken, verifyToken };

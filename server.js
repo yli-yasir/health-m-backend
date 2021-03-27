@@ -6,16 +6,17 @@ const prettyLogger = require("./utils/prettyLogger");
 const patientsRouter = require("./routes/patients");
 const usersRouter = require("./routes/users");
 const errorHandlers = require("./middleware/errorHandlers");
+const bearerToken = require('express-bearer-token');
 const cookieParser = require("cookie-parser");
 
 const app = express();
 app.use(express.json());
+app.use(bearerToken())
 app.use(cookieParser());
 app.use(
   cors({
     origin: true,
     exposedHeaders: "Location",
-    credentials:true
   })
 );
 
