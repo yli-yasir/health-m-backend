@@ -6,7 +6,7 @@ const AUTH_COOKIE_NAME = "tkn";
 const AUTH_COOKIE_SETTING = {
   httpOnly: true,
   secure: process.env.SECURE_COOKIES === "true" ? true : false,
-  sameSite: 'none'
+  sameSite: 'None; Secure'
 };
 
 async function authenticateUser(req, res, next) {
