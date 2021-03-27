@@ -1,5 +1,6 @@
 const userManager = require("../db/userManager");
 const jwt = require("jsonwebtoken");
+const prettyLogger = require("../utils/prettyLogger");
 
 const AUTH_COOKIE_NAME = "tkn";
 const AUTH_COOKIE_SETTING = {
@@ -10,6 +11,7 @@ const AUTH_COOKIE_SETTING = {
 async function authenticateUser(req, res, next) {
   let email = req.body.email;
   const password = req.body.password;
+
   // If a username and password are defined and of type string
   if (typeof email === "string" && typeof password === "string") {
     try {
@@ -20,13 +22,14 @@ async function authenticateUser(req, res, next) {
         return res.sendStatus(401);
       }
       //If auth succeeded pass control to next route after injecting req.user
+      prettyLogger.logInfo('User authenticated!');
       req.user = { email: authResult.user.email };
       next();
     } catch (err) {
       next(err);
     }
   }
-  //If email and password were not defined and of type string
+  //If email and password were not defined or not of type string
   else {
     res.sendStatus(400);
   }
@@ -38,19 +41,21 @@ function grantToken(req, res, next) {
     { id: req.user.id, name: req.user.name },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "1 day",
     }
   );
 
   // Set a cookie in the response with the token
   res.cookie(AUTH_COOKIE_NAME, token, AUTH_COOKIE_SETTING);
-
+  
+  console.log('token granted.')
   // Pass control to the next route
   next();
 }
 
 function verifyToken(req, res, next) {
   const token = req.cookies["tkn"];
+  console.log('verified', token);
   if (typeof token === "string") {
     try {
       req.user = jwt.verify(token, process.env.JWT_SECRET);
@@ -59,7 +64,7 @@ function verifyToken(req, res, next) {
       next(err);
     }
   } else {
-    res.sendStatus(400);
+    res.sendStatus(401);
   }
 }
 

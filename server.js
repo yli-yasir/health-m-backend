@@ -13,7 +13,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
+    origin: true,
     exposedHeaders: "Location",
+    credentials:true
   })
 );
 

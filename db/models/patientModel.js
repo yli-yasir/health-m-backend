@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const trimmedString = { type: String, trim: true };
+const {trimmedString} = require("./schemaTypes");
 
 const patientSchema = new mongoose.Schema({
   fullName: trimmedString,
