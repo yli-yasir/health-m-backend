@@ -9,7 +9,7 @@ async function authenticateUser(req, res, next) {
   // If a username and password are defined and of type string
   if (typeof email === "string" && typeof password === "string") {
     try {
-      email = email.trim();
+      email = email.trim().toLowerCase();
       const authResult = await userManager.authenticateUser(email, password);
       //If auth failed
       if (authResult.statusCode !== userManager.AUTH_SUCCESS) {
